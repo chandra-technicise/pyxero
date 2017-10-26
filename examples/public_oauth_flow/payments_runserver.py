@@ -117,13 +117,28 @@ class PublicCredentialsHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             #page_body = 'Your contacts:<br><br>'
 
             #contacts = xero.contacts.all()
-            contacts = xero.payments.all()
-            if contacts:
-                page_body = contacts#json.dumps(xmltodict.parse(contacts))
-                #page_body += '<br>'.join([str(contact) for contact in contacts])
+            payments = xero.payments.all()
+            paymentsList = [] #dict()
+            if payments:
+                for payment in payments:
+                    paymentDetails = dict()
+                    if "PaymentID" in payment:
+                        paymentDetails["paymentId"] = payment ["PaymentID"]
+                    if "BankAmount" in payment:
+                        paymentDetails["BankAmount"] = payment ["BankAmount"]
+                    if "Invoice" in payment:
+                        invoiceDetails = payment["Invoice"]
+                        if "Contact" in invoiceDetails:
+                            contactDetails = invoiceDetails["Contact"]
+                            if "Name" in contactDetails:
+                                paymentDetails["ContactName"] = contactDetails ["Name"]
+                    #print paymentId
+                    paymentsList.append(paymentDetails)
+
+                page_body = json.dumps(paymentsList)
             else:
-                page_body = 'No contacts'
-            self.page_response(title='Xero Contacts', body=page_body)
+                page_body = 'No Payments'
+            self.page_response(title='Xero Payments', body=page_body)
             return
 
         SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
