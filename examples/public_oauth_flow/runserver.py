@@ -1,6 +1,6 @@
 import sys
 import os
-import SimpleHTTPServer
+#import SimpleHTTPServer
 import SocketServer
 from urlparse import urlparse, parse_qsl
 
@@ -129,5 +129,5 @@ class PublicCredentialsHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 if __name__ == '__main__':
     httpd = SocketServer.TCPServer(("", PORT), PublicCredentialsHandler)
 
-    print "serving at port", PORT
+    print ("serving at port", PORT)
     httpd.serve_forever()
